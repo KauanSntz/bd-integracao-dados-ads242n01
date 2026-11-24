@@ -2,9 +2,20 @@
 
 **Última atualização:** 24/11/2026
 **Branch:** `feat/etapa1`
-**Etapa em andamento:** Etapa 2 (Consultas) — **CONCLUÍDA** ✅
+**Etapa em andamento:** Etapa 3 (Validação) — **CONCLUÍDA** ✅
 
 ---
+
+## Feito (Etapa 3)
+
+- [x] `sql/04_validacao.sql` criado e testado (10 consultas, todas retornam linhas esperadas).
+- [x] `docs/parte4_validacao.md` preenchido (roteiro, pontos, técnicas, consultas, erros).
+- [x] Fechamento de fev/2025: 14 produtos, P14 lidera (R$ 5.633,90).
+- [x] 19 vendas fora de fev/2025 identificadas.
+- [x] 11 pedidos sem entrada, 2 entradas órfãs, 11 ordens zero, 5 qtdes fracionadas,
+      13 vendas sem cadastro, 20 entregas invertidas, 9 duplicatas, 18 divergências.
+- [x] Ajuste opcional em `03_transformacoes.sql`: mantido `COUNT(*) > 10`
+      (justificativa das duas interpretações no comentário).
 
 ## Feito (Etapa 2)
 
@@ -17,23 +28,9 @@
 - [x] "Mais de 10 vezes": COUNT(*) > 10 → 0 produtos neste dataset (justificado).
 - [x] Trigger `trg_produtos_filial_idfornecedor` testado: NULL → F21 (ROLLBACK).
 
-## Em andamento
-
-Nada. Etapa 2 concluída.
-
-## Falhou / Bloqueado
-
-Nenhum.
-
-## Próximo passo concreto
-
-Etapa 2 encerrada. Aguardar autorização para iniciar a Etapa 3
-(`docs/parte4_validacao.md` + `sql/04_validacao.sql`).
-
 ## Feito (Etapa 1)
 
-- [x] Repositório clonado em `C:\Users\kauan\OneDrive\Documentos\bd-integracao-dados`
-      (branch `main`, commit `8b8f089`).
+- [x] Repositório clonado em `C:\Users\kauan\OneDrive\Documentos\bd-integracao-dados`.
 - [x] `AGENTS.md` e `PROGRESSO.md` criados.
 - [x] Enunciado lido: `docs/Atividade_Integracao_de_Dados.pdf` (3 páginas) e `README.md`.
 - [x] Planilha inspecionada por completo (5 abas, pandas + openpyxl).
@@ -61,16 +58,15 @@ Etapa 2 encerrada. Aguardar autorização para iniciar a Etapa 3
 
 ## Em andamento
 
-Nada. Etapa 1 concluída.
+Nada. Atividade concluída.
 
 ## Falhou / Bloqueado
 
-Nenhum bloqueio ativo.
+Nenhum.
 
 ## Próximo passo concreto
 
-Etapa 1 encerrada. Aguardar autorização para iniciar a Etapa 2
-(`sql/02_consultas.sql`, `sql/03_transformacoes.sql` com trigger).
+Atividade concluída. Revisar README.md (matrícula) e abrir Pull Request.
 
 ## Comandos que funcionaram
 
@@ -79,6 +75,9 @@ Etapa 1 encerrada. Aguardar autorização para iniciar a Etapa 2
 $env:PGPASSWORD="1234"; psql -h localhost -U postgres -d postgres -c "CREATE DATABASE atividade;"
 $env:PGPASSWORD="1234"; psql -h localhost -U postgres -d atividade -f sql/01_ddl_postgres.sql
 $env:PGPASSWORD="1234"; psql -h localhost -U postgres -d atividade -f sql/validar.sql
+$env:PGPASSWORD="1234"; psql -h localhost -U postgres -d atividade -f sql/02_consultas.sql
+$env:PGPASSWORD="1234"; psql -h localhost -U postgres -d atividade -f sql/03_transformacoes.sql
+$env:PGPASSWORD="1234"; psql -h localhost -U postgres -d atividade -f sql/04_validacao.sql
 
 # Importação
 $env:PGDATABASE="atividade"; $env:PGPASSWORD="1234"; .\.venv\Scripts\python.exe scripts\importar.py
@@ -105,12 +104,13 @@ choco install postgresql16 ...    # instalador EDB travou ao registrar o serviç
    instalador EDB travou.
 5. `produto_id` padronizado para `varchar(25)` nos dois DDLs.
 6. FKs criadas apenas onde os dados permitem (`produtos_filial`→`fornecedor`,
-   `pedido_compra`→`fornecedor`); as demais ficam documentadas em `validar.sql`.
+   `pedido_compra`→`fornecedor`); `fk_venda_produto` como `NOT VALID`;
+   `fk_entradas_pedido` impossível por falta de unicidade.
 7. Importação usa `SAVEPOINT` por linha e `Decimal` para quantidades/preços.
 8. Persistência: um commit atômico por item do checklist.
 9. Identidade dos commits: `Kauan Ferreira dos Santos <2021331680@ifam.edu.br>`.
 
-## Estrutura de commits (Etapa 1)
+## Estrutura de commits
 
 | Commit | Conteúdo |
 | --- | --- |
@@ -124,3 +124,5 @@ choco install postgresql16 ...    # instalador EDB travou ao registrar o serviç
 | 8 | `feat: fk_venda_produto NOT VALID + registro de fk_entradas_pedido impossivel` |
 | 9 | `feat: adiciona sql/02_consultas.sql` |
 | 10 | `feat: adiciona sql/03_transformacoes.sql (concat, datas, >10 vezes, trigger)` |
+| 11 | `feat: adiciona sql/04_validacao.sql + docs/parte4_validacao.md` |
+| 12 | `docs: atualiza PROGRESSO.md (atividade concluída)` |
