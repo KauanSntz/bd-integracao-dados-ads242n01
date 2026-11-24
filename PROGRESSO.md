@@ -2,9 +2,33 @@
 
 **Última atualização:** 24/11/2026
 **Branch:** `feat/etapa1`
-**Etapa em andamento:** Etapa 1 (Implantação) — **CONCLUÍDA** ✅
+**Etapa em andamento:** Etapa 2 (Consultas) — **CONCLUÍDA** ✅
 
 ---
+
+## Feito (Etapa 2)
+
+- [x] `sql/02_consultas.sql` criado e testado (2 consultas).
+- [x] `sql/03_transformacoes.sql` criado e testado (4 blocos + trigger).
+- [x] Total vendido em fev/2025: 14 produtos, P14 lidera (R$ 5.633,90).
+- [x] Produtos requisitados e não recebidos: 9 (P12..P20, ordens sem entrada).
+- [x] Concatenação `produto_id - descricao` (20 linhas).
+- [x] Datas em DD/MM/YYYY (venda e pedido_compra).
+- [x] "Mais de 10 vezes": COUNT(*) > 10 → 0 produtos neste dataset (justificado).
+- [x] Trigger `trg_produtos_filial_idfornecedor` testado: NULL → F21 (ROLLBACK).
+
+## Em andamento
+
+Nada. Etapa 2 concluída.
+
+## Falhou / Bloqueado
+
+Nenhum.
+
+## Próximo passo concreto
+
+Etapa 2 encerrada. Aguardar autorização para iniciar a Etapa 3
+(`docs/parte4_validacao.md` + `sql/04_validacao.sql`).
 
 ## Feito (Etapa 1)
 
@@ -98,3 +122,5 @@ choco install postgresql16 ...    # instalador EDB travou ao registrar o serviç
 | 6 | `docs: preenche parte1_importacao.md` |
 | 7 | `docs: preenche tabela Equipe no README` |
 | 8 | `feat: fk_venda_produto NOT VALID + registro de fk_entradas_pedido impossivel` |
+| 9 | `feat: adiciona sql/02_consultas.sql` |
+| 10 | `feat: adiciona sql/03_transformacoes.sql (concat, datas, >10 vezes, trigger)` |
