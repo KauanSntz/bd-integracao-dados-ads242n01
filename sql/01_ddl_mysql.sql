@@ -117,6 +117,15 @@ CREATE TABLE venda (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- -----------------------------------------------------------------------------
+-- Pós-importação (dados com órfãos)
+-- O MySQL 8 nao suporta NOT VALID. A FK equivalente so pode ser criada em tabela
+-- vazia ou apos a limpeza dos orfaos (P21..P28). Rode apos a importacao limpa:
+--   ALTER TABLE venda
+--     ADD CONSTRAINT fk_venda_produto
+--     FOREIGN KEY (filial_id, produto_id) REFERENCES produtos_filial (filial_id, produto_id);
+-- -----------------------------------------------------------------------------
+
+-- -----------------------------------------------------------------------------
 -- Conferência rápida da estrutura criada
 -- -----------------------------------------------------------------------------
 SELECT table_name

@@ -24,6 +24,10 @@
 - [x] `scripts/importar.py` corrigido (datas, vírgula decimal, hora TIME, fornecedor
       1..20 → F1..F20, nomes de coluna, SAVEPOINT, contador real).
 - [x] Importação rodada: 20/20/29/20/33, 0 rejeitadas.
+- [x] `fk_venda_produto` adicionada como `NOT VALID` (pós-importação): 13 órfãos
+      P21..P28 mantidos; 3 FKs no banco (2 validadas, 1 NOT VALID).
+- [x] `fk_entradas_pedido` impossível: `UNIQUE(ordem_compra,item,produto_id)` violada
+      por 2 grupos `(0,1,P19)` e `(0,1,P20)`.
 - [x] `sql/validar.sql` criado e executado (contagens OK, 2 entradas órfãs, 13 vendas
       órfãs, 20 datas invertidas, 11 ordens 0, 9 pedidos duplicados, 5 qtdes fracionadas,
       18 divergências de quantidade).
@@ -93,3 +97,4 @@ choco install postgresql16 ...    # instalador EDB travou ao registrar o serviç
 | 5 | `feat: adiciona sql/validar.sql` |
 | 6 | `docs: preenche parte1_importacao.md` |
 | 7 | `docs: preenche tabela Equipe no README` |
+| 8 | `feat: fk_venda_produto NOT VALID + registro de fk_entradas_pedido impossivel` |

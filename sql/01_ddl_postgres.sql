@@ -131,6 +131,20 @@ CREATE TABLE public.venda (
 );
 
 -- -----------------------------------------------------------------------------
+-- Pós-importação (dados com órfãos)
+-- fk_venda_produto é criada DEPOIS da importação, como NOT VALID, porque 13
+-- vendas referenciam P21..P28 inexistentes em produtos_filial. NOT VALID mantém
+-- os dados existentes e passa a validar apenas novas inserções/atualizações.
+-- Rode após `python scripts/importar.py`:
+--   ALTER TABLE public.venda
+--     ADD CONSTRAINT fk_venda_produto
+--     FOREIGN KEY (filial_id, produto_id)
+--     REFERENCES public.produtos_filial (filial_id, produto_id) NOT VALID;
+-- Para validar depois (quando os órfãos forem resolvidos):
+--   ALTER TABLE public.venda VALIDATE CONSTRAINT fk_venda_produto;
+-- -----------------------------------------------------------------------------
+
+-- -----------------------------------------------------------------------------
 -- Conferência rápida da estrutura criada
 -- -----------------------------------------------------------------------------
 SELECT table_name

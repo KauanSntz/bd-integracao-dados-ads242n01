@@ -93,6 +93,10 @@ Decisões de modelagem documentadas no DDL:
 - `venda` não tem FK para `produtos_filial`: existem vendas de `P21..P28` sem cadastro.
 - `produtos_filial.idfornecedor` e `pedido_compra.fornecedor_id` têm FK para `fornecedor`
   (dados válidos após a normalização 1..20 → F1..F20).
+- `fk_venda_produto` criada como `NOT VALID` (pós-importação) porque 13 vendas
+  referenciam P21..P28 inexistentes em `produtos_filial`.
+- `fk_entradas_pedido` não pode ser criada: requer `UNIQUE(ordem_compra, item, produto_id)`,
+  violada por 2 grupos (`(0,1,P19)` e `(0,1,P20)`).
 
 ## Erros encontrados no script de importação e como foram corrigidos
 
@@ -172,3 +176,5 @@ Detalhes e consultas em `sql/validar.sql`.
 11. **`venda` não tem FK para `produtos_filial`** e **`entradas_mercadoria` não tem FK
     para `pedido_compra`** por causa dos itens 2, 4 e 5; as FKs válidas
     (`produtos_filial`→`fornecedor`, `pedido_compra`→`fornecedor`) foram criadas.
+    `fk_venda_produto` foi adicionada como `NOT VALID` (pós-importação); `fk_entradas_pedido`
+    não pode ser criada por falta de unicidade em `ordem_compra`.
