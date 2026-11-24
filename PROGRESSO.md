@@ -2,107 +2,93 @@
 
 **Última atualização:** 24/11/2026
 **Branch:** `feat/etapa1`
-**Etapa em andamento:** Etapa 1 (Implantação) — **BLOQUEADA no passo 3 (banco)**
+**Etapa em andamento:** Etapa 1 (Implantação) — **CONCLUÍDA** ✅
 
 ---
 
-## Feito
+## Feito (Etapa 1)
 
 - [x] Repositório clonado em `C:\Users\kauan\OneDrive\Documentos\bd-integracao-dados`
       (branch `main`, commit `8b8f089`).
-- [x] `AGENTS.md` criado (contexto, regras, ambiente, checklist, hipóteses).
-- [x] `PROGRESSO.md` criado.
+- [x] `AGENTS.md` e `PROGRESSO.md` criados.
 - [x] Enunciado lido: `docs/Atividade_Integracao_de_Dados.pdf` (3 páginas) e `README.md`.
-- [x] Planilha inspecionada por completo (5 abas, via pandas + openpyxl, dados reais de célula).
+- [x] Planilha inspecionada por completo (5 abas, pandas + openpyxl).
+- [x] PostgreSQL 16 instalado (Chocolatey) e rodando como serviço `postgresql-x64-16`
+      (porta 5432, usuário `postgres`, senha de exemplo `1234`).
+- [x] `sql/01_ddl_enunciado.sql` rodado em `enunciado_teste` — 3 erros anotados:
+      `entradas_mercadoria` (coluna `ordem_compra` ausente), `produtos_filial` (sintaxe
+      + `idproduto` inexistente), `fornecedor` (`idproduto` inexistente). `venda` e
+      `pedido_compra` criadas com problemas de modelagem.
+- [x] `sql/01_ddl_postgres.sql` criado e validado: 5 tabelas em `atividade`.
+- [x] `sql/01_ddl_mysql.sql` criado (MySQL 8+, InnoDB, DECIMAL).
+- [x] `scripts/importar.py` corrigido (datas, vírgula decimal, hora TIME, fornecedor
+      1..20 → F1..F20, nomes de coluna, SAVEPOINT, contador real).
+- [x] Importação rodada: 20/20/29/20/33, 0 rejeitadas.
+- [x] `sql/validar.sql` criado e executado (contagens OK, 2 entradas órfãs, 13 vendas
+      órfãs, 20 datas invertidas, 11 ordens 0, 9 pedidos duplicados, 5 qtdes fracionadas,
+      18 divergências de quantidade).
+- [x] `docs/parte1_importacao.md` preenchido.
+- [x] Script original testado em `script_original` para evidenciar seus erros reais
+      (pedido_compra 0 por FK; venda 0 por datas nulas; contadores mentirosos).
 
 ## Em andamento
 
-- Etapa 1, passo 3: rodar `sql/01_ddl_enunciado.sql` no PostgreSQL. **Sem banco disponível.**
+Nada. Etapa 1 concluída.
 
 ## Falhou / Bloqueado
 
-**BLOQUEIO DE AMBIENTE (decisão do usuário necessária)**
-
-- `docker` não existe (nem Docker Desktop em `C:\Program Files\Docker`).
-- Não há PostgreSQL local (`C:\Program Files\PostgreSQL` inexistente, `psql` fora do PATH,
-  nenhum serviço `*postgres*`).
-- Porta 5432 fechada (`Test-NetConnection localhost:5432` → `False`).
-- `wsl` não instalado; `podman` inexistente.
-- Consequência: passos 3, 7 e 8 da Etapa 1 (rodar DDL, importar, `COUNT(*)`) estão bloqueados.
-  Não instalei nada de banco, conforme a regra "perguntar antes de instalar".
+Nenhum bloqueio ativo.
 
 ## Próximo passo concreto
 
-1. Usuário escolhe como disponibilizar o PostgreSQL 16 (Docker Desktop, instalador nativo,
-   ou informar um banco já existente).
-2. Criar o banco/confirmar conexão e rodar `sql/01_ddl_enunciado.sql`, anotando erro por erro.
-3. Seguir o checklist da Etapa 1 em `AGENTS.md`.
-
-## Levantamento da planilha (passo 2 — concluído)
-
-| Aba | Linhas | Colunas | Observação |
-| --- | --- | --- | --- |
-| `venda` | 33 | 9 | `venda_id` 1..33 único; `filial_id` 1..3; `horariomov` sempre `08:00:00`; `item` sempre 1; `unidade_medida` sempre `UN`; datas 2025-01-10..2025-03-28; 28 produtos distintos (`P1..P28`) |
-| `pedido_compra` | 29 | **23** | 12 campos + 11 colunas extras `Unnamed: 12..22`. `pedido_id` 1..29 único; `filial_id` sempre 1; `ordem_compra` 0 nas linhas 21..29 (suspeito) |
-| `entradas_mercadoria` | 20 | 9 | `nro_nfe` `NFE1..NFE20`; `ordem_compra` 1..20; `item` sempre 1; `filial_id` sempre 1 |
-| `produtos_filial` | 20 | 8 | colunas reais: `filial_id, idproduto, descricao, estoque, preco_unitario, preco_compra, preco_venda, idfornecedor`; `P1..P20`; `idfornecedor` `F7..F20` (17 distintos) |
-| `fornecedor` | 20 | 2 | `idfornecedor` `F1..F20`, `razao_social` "Fornecedor N LTDA" |
-
-### Anomalias confirmadas na planilha (detalhe em `AGENTS.md` §6.3)
-
-1. **`pedido_compra` com 23 colunas.** Existe um bloco duplicado em `M..W` nas linhas
-   22..30 do Excel (pedidos 21..29). O bloco `A..L` dessas linhas está corrompido:
-   `ordem_compra = 0`, `qtde_pedida` pequena, `qtde_entregue = 0`. O bloco `M..W` é
-   internamente consistente (`qtde_pendente = qtde_pedida - qtde_entregue` fecha em todas
-   as 9 linhas) e casa com `entradas_mercadoria.ordem_compra` 12..20. **Decisão pendente
-   de registro final**: importar os valores de `M..W` (reconciliados, `fornecedor_id` vem de
-   `L`) e documentar a correção + consulta de detecção.
-2. **`venda.produto_id` vai até `P28`**, mas `produtos_filial` só tem `P1..P20` → prováveis
-   vendas órfãs (8 produtos).
-3. `pedido_compra.fornecedor_id` é `1..20` (inteiro) e `fornecedor.idfornecedor` é `F1..F20`
-   (texto) → exige mapeamento.
-4. Hipóteses de vírgula decimal e de datas M/D/YYYY **não se confirmaram** nesta versão:
-   as células já são numéricas e datas reais do Excel. Manter parser defensivo.
+Etapa 1 encerrada. Aguardar autorização para iniciar a Etapa 2
+(`sql/02_consultas.sql`, `sql/03_transformacoes.sql` com trigger).
 
 ## Comandos que funcionaram
 
 ```powershell
-git clone https://github.com/agnpreto/bd-integracao-dados-ads242n01.git "C:\Users\kauan\OneDrive\Documentos\bd-integracao-dados"
-cd "C:\Users\kauan\OneDrive\Documentos\bd-integracao-dados"
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install pandas openpyxl psycopg2-binary pypdf
-.\.venv\Scripts\python.exe -c "import pandas, openpyxl, psycopg2, pypdf; print('ok')"
-```
+# Banco
+$env:PGPASSWORD="1234"; psql -h localhost -U postgres -d postgres -c "CREATE DATABASE atividade;"
+$env:PGPASSWORD="1234"; psql -h localhost -U postgres -d atividade -f sql/01_ddl_postgres.sql
+$env:PGPASSWORD="1234"; psql -h localhost -U postgres -d atividade -f sql/validar.sql
 
-Extração do PDF (necessário porque o modelo não lê PDF direto):
+# Importação
+$env:PGDATABASE="atividade"; $env:PGPASSWORD="1234"; .\.venv\Scripts\python.exe scripts\importar.py
 
-```powershell
-.\.venv\Scripts\python.exe -c "from pypdf import PdfReader; r=PdfReader('docs/Atividade_Integracao_de_Dados.pdf'); open('C:/Users/kauan/AppData/Local/Temp/opencode/enunciado.txt','w',encoding='utf-8').write('\n\n'.join(p.extract_text() for p in r.pages))"
+# Teste do script original (evidência)
+git show origin/main:scripts/importar.py | Set-Content -Encoding UTF8 .../importar_original.py
 ```
 
 ## Comandos que falharam
 
 ```powershell
-docker --version                 # docker: não reconhecido
-docker ps -a                     # docker: não reconhecido
+docker --version                 # docker: não reconhecido (resolvido com PG nativo)
 wsl -l -v                        # WSL não instalado
-Test-NetConnection localhost 5432  # False (porta fechada)
-python -c "import pandas"        # ModuleNotFoundError (antes do venv)
+choco install postgresql16 ...    # instalador EDB travou ao registrar o serviço
+                                  # (resolvido com New-Service + pg_ctl)
 ```
 
 ## Decisões tomadas
 
-1. Venv local `.venv/` no repositório (já coberto pelo `.gitignore`), em vez de instalar
-   pacotes no Python global.
-2. `pypdf` instalado só para extrair o texto do enunciado (não é dependência da entrega).
-3. Persistência: **um commit atômico por item** do checklist; estado sempre no `PROGRESSO.md`
-   antes de avançar.
-4. Nada de banco será instalado sem autorização explícita do usuário.
+1. Venv local `.venv/` no repositório (já coberto pelo `.gitignore`).
+2. `pypdf` instalado só para extrair o texto do enunciado.
+3. PostgreSQL instalado nativamente (Chocolatey) em vez de Docker, por ausência de Docker.
+4. Serviço `postgresql-x64-16` registrado manualmente (`New-Service`) porque o
+   instalador EDB travou.
+5. `produto_id` padronizado para `varchar(25)` nos dois DDLs.
+6. FKs criadas apenas onde os dados permitem (`produtos_filial`→`fornecedor`,
+   `pedido_compra`→`fornecedor`); as demais ficam documentadas em `validar.sql`.
+7. Importação usa `SAVEPOINT` por linha e `Decimal` para quantidades/preços.
+8. Persistência: um commit atômico por item do checklist.
+9. Identidade dos commits: `Kauan Ferreira dos Santos <2021331680@ifam.edu.br>`.
 
-## Estrutura de commits
+## Estrutura de commits (Etapa 1)
 
 | Commit | Conteúdo |
 | --- | --- |
 | 1 | `chore: adiciona AGENTS.md e PROGRESSO.md` |
-| 2 | `docs: leitura do enunciado e inspeção das 5 abas da planilha` (se ainda não incluído no 1) |
-| ... | um por item do checklist |
+| 2 | `docs: leitura do enunciado e inspeção da planilha` |
+| 3 | `feat: DDL corrigido para PostgreSQL e MySQL` |
+| 4 | `fix: corrige importar.py (datas, decimais, FK fornecedor, SAVEPOINT)` |
+| 5 | `feat: adiciona sql/validar.sql` |
+| 6 | `docs: preenche parte1_importacao.md` |
