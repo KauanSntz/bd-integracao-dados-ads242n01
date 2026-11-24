@@ -10,7 +10,7 @@
 
 | Nome | Matrícula | Usuário do GitHub |
 | --- | --- | --- |
-|  |  |  |
+| Kauan Ferreira dos Santos | [matrícula] | KauanSntz |
 |  |  |  |
 
 ## O cenário
