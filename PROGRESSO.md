@@ -92,3 +92,4 @@ choco install postgresql16 ...    # instalador EDB travou ao registrar o serviç
 | 4 | `fix: corrige importar.py (datas, decimais, FK fornecedor, SAVEPOINT)` |
 | 5 | `feat: adiciona sql/validar.sql` |
 | 6 | `docs: preenche parte1_importacao.md` |
+| 7 | `docs: preenche tabela Equipe no README` |
